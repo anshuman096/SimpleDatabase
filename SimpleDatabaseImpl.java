@@ -209,6 +209,7 @@ public class SimpleDatabaseImpl implements SimpleDatabase {
 			
 		}
 		sc.close();
+        
 	}
 	
 }
