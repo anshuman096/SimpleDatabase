@@ -13,7 +13,7 @@ public class SimpleDatabaseImpl implements SimpleDatabase {
     private HashMap<String, ValueTuple> localUncommitedRemovals = new HashMap<String, ValueTuple> ();
 	
 	private class TransactionBlock{
-		private HashMap <String, ValueTuple> dataset = new HashMap<String, ValueTuple>();
+        private HashMap <String, ValueTuple> dataset = new HashMap<String, ValueTuple>();
 		private TransactionBlock () {} 
 	}
 	
