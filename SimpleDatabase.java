@@ -1,5 +1,9 @@
 package org.simpledatabase;
 
+/**
+ * A publicly accessible interface that, theoretically, will encapsulate the implementation of the database
+ * from users and act as a UI
+ */
 public interface SimpleDatabase {
 
 	/**
