@@ -9,7 +9,7 @@ public class SimpleDatabaseImpl implements SimpleDatabase {
 	private static SimpleDatabaseImpl database = new SimpleDatabaseImpl();
 	private Stack<TransactionBlock> blockStack = new Stack<TransactionBlock> ();
 	private HashMap<String, ValueTuple> cache = new HashMap<String, ValueTuple> ();
-    private HashMap<String, ValueTuple> globalUncommitedRemovals = new HashMap<String, ValueTuple> ();
+	private HashMap<String, ValueTuple> globalUncommitedRemovals = new HashMap<String, ValueTuple> ();
     private HashMap<String, ValueTuple> localUncommitedRemovals = new HashMap<String, ValueTuple> ();
 	
 	private class TransactionBlock{
@@ -56,14 +56,14 @@ public class SimpleDatabaseImpl implements SimpleDatabase {
 			result = database.cache.get(key);
 		//search through the current transaction blocks next
         if(!database.blockStack.isEmpty()) {
-            TransactionBlock current = database.blockStack.peek();
-            if(current.dataset.containsKey(key)) {
-                ValueTuple tVal = current.dataset.get(key);
-                if(result != null) {
-                    if(tVal.ts.getTime() > result.ts.getTime())
-                        result = tVal;
-                } else
-                	result = tVal;
+        	TransactionBlock current = database.blockStack.peek();
+	        if(current.dataset.containsKey(key)) {
+        	    ValueTuple tVal = current.dataset.get(key);
+	        	if(result != null) {
+        	     	if(tVal.ts.getTime() > result.ts.getTime())
+                	    result = tVal;
+	            } else
+        	        result = tVal;
             }
         }
 		if(result != null)
@@ -77,20 +77,20 @@ public class SimpleDatabaseImpl implements SimpleDatabase {
 	 */
 	@Override
 	public void unset(String key) {
-        ValueTuple v = null;
-        if(database.cache.containsKey(key)) { //globally remove
-            v = database.cache.remove(key);
-            database.globalUncommitedRemovals.put(key, v);
-            return;
-        }
-        if(!database.blockStack.isEmpty()) { //remove within transaction blocks
-            if(database.blockStack.peek().dataset.containsKey(key)) {
-                v = database.blockStack.peek().dataset.remove(key);
-                database.localUncommitedRemovals.put(key, v);
-                return;
-            }
-        }
-        System.out.println("> NULL");
+    	ValueTuple v = null;
+	        if(database.cache.containsKey(key)) { //globally remove
+        	    v = database.cache.remove(key);
+	            database.globalUncommitedRemovals.put(key, v);
+        	    return;
+        	}
+        	if(!database.blockStack.isEmpty()) { //remove within transaction blocks
+	            if(database.blockStack.peek().dataset.containsKey(key)) {
+        	        v = database.blockStack.peek().dataset.remove(key);
+               		database.localUncommitedRemovals.put(key, v);
+	                return;
+           	    }
+        	}
+	        System.out.println("> NULL");
 	}
 	
 	/**
