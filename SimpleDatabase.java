@@ -4,7 +4,7 @@ package org.simpledatabase;
  * A publicly accessible interface that, theoretically, will encapsulate the implementation of the database
  * from users and act as a UI
  */
-public interface SimpleDatabase<K, v> {
+public interface SimpleDatabase<K, V> {
 
 	/**
 	 * Set adds a <Key, ValueTuple> pair into the HashMap of the 
