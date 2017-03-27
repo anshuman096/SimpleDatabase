@@ -10,10 +10,10 @@ public class SimpleDatabaseImpl implements SimpleDatabase {
 	private Stack<TransactionBlock> blockStack = new Stack<TransactionBlock> ();
 	private HashMap<String, ValueTuple> cache = new HashMap<String, ValueTuple> ();
 	private HashMap<String, ValueTuple> globalUncommitedRemovals = new HashMap<String, ValueTuple> ();
-    private HashMap<String, ValueTuple> localUncommitedRemovals = new HashMap<String, ValueTuple> ();
+    	private HashMap<String, ValueTuple> localUncommitedRemovals = new HashMap<String, ValueTuple> ();
 	
 	private class TransactionBlock{
-        private HashMap <String, ValueTuple> dataset = new HashMap<String, ValueTuple>();
+        	private HashMap <String, ValueTuple> dataset = new HashMap<String, ValueTuple>();
 		private TransactionBlock () {} 
 	}
 	
@@ -38,38 +38,41 @@ public class SimpleDatabaseImpl implements SimpleDatabase {
 	 */
 	@Override
 	public void set(String key, Integer value) {
-        ValueTuple v = new ValueTuple(value);
-        if(database.blockStack.isEmpty()) {
-            database.cache.put(key, v);    
-        } else
-            database.blockStack.peek().dataset.put(key, v);
+        	ValueTuple v = new ValueTuple(value);
+	        if(database.blockStack.isEmpty()) {
+        	    database.cache.put(key, v);    
+	        } else
+        	    database.blockStack.peek().dataset.put(key, v);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.simpledatabase.SimpleDabatase#get(java.lang.String)
 	 */
 	@Override
-	public void get(String key) {
+	public V get(String key) {
 		//first search for variable in global cache
 		ValueTuple result = null;
 		if(database.cache.containsKey(key)) 
 			result = database.cache.get(key);
 		//search through the current transaction blocks next
-        if(!database.blockStack.isEmpty()) {
-        	TransactionBlock current = database.blockStack.peek();
-	        if(current.dataset.containsKey(key)) {
-        	    ValueTuple tVal = current.dataset.get(key);
-	        	if(result != null) {
-        	     	if(tVal.ts.getTime() > result.ts.getTime())
-                	    result = tVal;
-	            } else
-        	        result = tVal;
-            }
-        }
-		if(result != null)
+        	if(!database.blockStack.isEmpty()) {
+        		TransactionBlock current = database.blockStack.peek();
+		        if(current.dataset.containsKey(key)) {
+        		    ValueTuple tVal = current.dataset.get(key);
+	        	    if(result != null) {
+	        	     	if(tVal.ts.getTime() > result.ts.getTime())
+        	                result = tVal;
+		            } else
+        		        result = tVal;
+            		}
+        	}
+		if(result != null) {
 			System.out.println("> " + result.value.toString());
-		else
+			return result.value;
+		} else {
 			System.out.println("> NULL");
+			return null;
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -103,17 +106,17 @@ public class SimpleDatabaseImpl implements SimpleDatabase {
 	 */
 	public int numEqualTo(Integer value) {
 		int counter = 0;
-        for(String key : database.cache.keySet()) { //global check
-            if(value.equals(database.cache.get(key).value))
-                counter++;
-        }
-        if(!database.blockStack.isEmpty()) {
-    		for (String key : database.blockStack.peek().dataset.keySet()) { //transaction block check
-                if (value.equals(database.blockStack.peek().dataset.get(key).value))
-                    counter++;
-		    }
-        }
-        return counter;
+        	for(String key : database.cache.keySet()) { //global check
+            		if(value.equals(database.cache.get(key).value))
+                	counter++;
+        	}
+	        if(!database.blockStack.isEmpty()) {
+    			for (String key : database.blockStack.peek().dataset.keySet()) { //transaction block check
+                		if (value.equals(database.blockStack.peek().dataset.get(key).value))
+	                    		counter++;
+		    	}
+        	}
+	        return counter;
 	}
 	
 	/* (non-Javadoc)
@@ -134,14 +137,13 @@ public class SimpleDatabaseImpl implements SimpleDatabase {
 			System.out.println("> NO TRANSACTION");
 		else {
 			database.blockStack.pop();
-            if(!database.blockStack.isEmpty()) {
-                database.cache.putAll(database.globalUncommitedRemovals);
-                database.blockStack.peek().dataset.putAll(database.localUncommitedRemovals);
-                database.globalUncommitedRemovals.clear();
-                database.localUncommitedRemovals.clear();
-            }
-        }
-		
+	            if(!database.blockStack.isEmpty()) {
+        	        database.cache.putAll(database.globalUncommitedRemovals);
+               		database.blockStack.peek().dataset.putAll(database.localUncommitedRemovals);
+	                database.globalUncommitedRemovals.clear();
+        	        database.localUncommitedRemovals.clear();
+            	    }
+        	}
 	}
 	
 	/* (non-Javadoc)
@@ -149,16 +151,16 @@ public class SimpleDatabaseImpl implements SimpleDatabase {
 	 */
 	@Override
 	public void commit() {
-        if(database.blockStack.size() == 0) {
-            System.out.println("> NO TRANSACTION");
-            return;
-        } else {
-            Stack<TransactionBlock> temp = new Stack<TransactionBlock> ();
-            while(!database.blockStack.isEmpty()) 
-                temp.push(database.blockStack.pop()); // in order to preserve order in which variables were entered
-            while(!temp.isEmpty()) 
-                database.cache.putAll(temp.pop().dataset);
-        }
+        	if(database.blockStack.size() == 0) {
+        	    	System.out.println("> NO TRANSACTION");
+            		return;
+	        } else {
+	        	Stack<TransactionBlock> temp = new Stack<TransactionBlock> ();
+		        while(!database.blockStack.isEmpty()) 
+                		temp.push(database.blockStack.pop()); // in order to preserve order in which variables were entered
+	          	while(!temp.isEmpty()) 
+		                database.cache.putAll(temp.pop().dataset);
+        	}
 	}
 	
 		
