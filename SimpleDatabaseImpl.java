@@ -161,55 +161,5 @@ public class SimpleDatabaseImpl implements SimpleDatabase {
         }
 	}
 	
-	
-	public static void main(String[] args) {
-		SimpleDatabase database = SimpleDatabaseImpl.getInstance();
-		Scanner sc = new Scanner(System.in);
-		while(sc.hasNextLine()) {
-			String command = sc.nextLine();
-			System.out.println(command);
-			String[] tokens = command.split(" ");
-			String command_name = tokens[0];
-			String var_name;
-			Integer value;
-			switch(command_name) {
-			case "SET":
-				var_name = tokens[1];
-				value = Integer.valueOf(tokens[2]);
-				database.set(var_name, value);
-				break;
-			case "GET":
-				var_name = tokens[1];
-				database.get(var_name);
-				break;
-			case "UNSET":
-				var_name = tokens[1];
-				database.unset(var_name);
-				break;
-			case "NUMEQUALTO":
-				value = Integer.valueOf(tokens[1]);
-				int ctr = database.numEqualTo(value);
-				System.out.println("> " + ctr);
-				break;
-			case "BEGIN":
-				database.begin();
-				break;
-			case "ROLLBACK":
-				database.rollBack();
-				break;
-			case "COMMIT":
-				database.commit();
-				break;
-			case "END": 
-				sc.close();
-				return;
-			default:
-				System.out.println("Invalid command");
-			}
-			
-		}
-		sc.close();
-        
-	}
-	
+		
 }
